@@ -1,0 +1,125 @@
+import os
+import pyodbc
+from tabulate import tabulate
+
+SERVER = '192.168.0.254'
+DATABASE = 'BDDEMO'
+USERNAME = 'microuni'
+PASSWORD = 'microuni'
+
+print()
+print(" ---------------------------------------------------")
+print(" ---------------------------------------------------")
+print(" ----------- REMARCAÇÃO DE PREÇOS DE NF ------------")
+print(" ---------------------------------------------------")
+print(" -------------------------------------- v1.0 MAAF---")
+print()
+
+while True:
+
+    print()
+
+    numnota = input(" Digite o Nº da NF: ")
+
+    conn = pyodbc.connect('DRIVER={SQL Server};SERVER='+SERVER+';DATABASE='+DATABASE+';UID='+USERNAME+';PWD='+PASSWORD)
+
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        WITH calculateddata AS (
+
+        SELECT
+            convert(varchar, b.Dtultrea, 3) 'REM',
+            convert(varchar, b.DtUltComp, 3) 'ENT',
+            a.codpro COD,
+            b.descr DESCRICAO,
+            FORMAT(a.quant, '0.00') QUAN,
+            a.unidade UND ,
+            FORMAT(a.preco, '0.00') RS_LISTA,
+            FORMAT(a.custven, '0.00') RS_CUSTO,
+            FORMAT(b.precoven, '0.00') RS_VEN_REAL,
+
+            CASE
+                WHEN b.margemluc=0 THEN 0 
+                ELSE CAST(((b.margemluc/(100-b.margemluc))*100) AS DECIMAL(7,1)) 
+            END AS "MKP",
+
+            CASE
+                WHEN b.precocomp=0 THEN 0
+                ELSE CAST(((b.precoven-b.precocomp)/b.precocomp)*100 AS DECIMAL(7,1))
+            END AS MKP_REAL,
+
+            FORMAT((a.valsubstri)/a.quant, '0.00') ST,
+            FORMAT(a.valoripi/a.quant, '0.00') IPI,
+            FORMAT(a.baseicms, '0.0') B_ICMS,
+            FORMAT(a.faconv, '0.00') CONVER,
+
+            CASE 
+                WHEN b.cm=60 THEN 'SUBSTITUIÇÃO'
+                WHEN b.cm=00 THEN 'TRIBUTADO'
+                WHEN b.cm=40 THEN 'ISENTO'
+                WHEN b.cm=20 THEN 'BASE REDUZIDA'
+                WHEN b.cm=70 THEN 'ST BASE REDUZ.'
+                ELSE b.cm
+            END TRIBUTACAO
+
+        FROM
+            ITNFENTCAD a,
+            produtocad b,
+            complementoproduto c
+
+        WHERE
+            a.codpro = b.codpro AND
+            b.codpro = c.codpro AND
+            a.numnota = ?
+
+        )
+
+        SELECT
+            [ENT],
+            [REM],
+            [COD],
+            [DESCRICAO],
+            [QUAN],
+            [UND],
+            [RS_LISTA],
+            [RS_CUSTO],
+            FORMAT([RS_CUSTO] * (1+([MKP]/100)), '0.00') AS [RS_VENDA_SUG],
+            [RS_VEN_REAL],
+            [MKP_REAL],
+            [MKP],
+            [MKP_REAL] - [MKP] AS [DIF_MKP],
+            [ST],
+            [CONVER]
+
+        FROM 
+            calculateddata
+
+        /*WHERE
+            [MKP_REAL] - [MKP] > 0.5 or [MKP_REAL] - [MKP] < -0.5*/
+
+        ORDER BY
+            [RS_CUSTO]
+        """, (numnota,)
+    )
+
+    records = cursor.fetchall()
+    if len(records) == 0:
+        print()
+        print(" NF não localizada")
+    else:
+        headers = ["Entra", "Remar", "Cod", "Descrição", "Qt", "Und", "Lista", "Custo", "Suger", "Real", "MKP R", "MKP", "D MKP", "ST","Conver."]
+        table = [[r.ENT, r.REM, r.COD, r.DESCRICAO, r.QUAN, r.UND, r.RS_LISTA, r.RS_CUSTO, r.RS_VENDA_SUG, r.RS_VEN_REAL, r.MKP_REAL, r.MKP, r.DIF_MKP, r.ST] for r in records]
+
+        print()
+        print(tabulate(table, headers=headers, tablefmt="fancy_grid"))
+
+    print()
+
+    conn.close()
+
+    continuar = input(" Deseja remarcar outra NF? (s/n): ")
+    if continuar.lower() != 's':
+        break
+
+    os.system('cls' if os.name == 'nt' else 'clear')  # Limpar a tela

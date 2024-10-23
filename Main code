@@ -118,8 +118,15 @@ while True:
 
     conn.close()
 
-    continuar = input(" Deseja remarcar outra NF? (s/n): ")
-    if continuar.lower() != 's':
-        break
+    quer_remarcar = input(" Deseja remarcar a NF? (s/n): ")
+    if quer_remarcar.lower() == 's':
+        remarcar_todos = input(" Deseja remarcar TODOS os itens? (s/n): ")
+        if remarcar_todos.lower() == 's':
+            print("Remarcando todos os itens...") # Inserir o script para remarcar TODAS as linhas
+        else:
+            num_linhas = input(" Digite os Nºs das linhas: ")
+            print("Remarcando as linhas selecionadas...") # Inserir a logica para processar as linhas selecionadas   
+    else:
+        print("Nenhum item será remarcado. Próxima NF.")      
 
     os.system('cls' if os.name == 'nt' else 'clear')  # Limpar a tela

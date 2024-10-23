@@ -108,8 +108,8 @@ while True:
         print()
         print(" NF não localizada")
     else:
-        headers = ["Entra", "Remar", "Cod", "Descrição", "Qt", "Und", "Lista", "Custo", "Suger", "Real", "MKP R", "MKP", "D MKP", "ST","Conver."]
-        table = [[r.ENT, r.REM, r.COD, r.DESCRICAO, r.QUAN, r.UND, r.RS_LISTA, r.RS_CUSTO, r.RS_VENDA_SUG, r.RS_VEN_REAL, r.MKP_REAL, r.MKP, r.DIF_MKP, r.ST] for r in records]
+        headers = ["Entra", "Remar", "Cod", "Descrição", "Qt", "Und", "Lista", "Custo", "Suger", "Real", "MKP R", "MKP", "D MKP", "#", "ST", "Conver."]
+        table = [[r.ENT, r.REM, r.COD, r.DESCRICAO, r.QUAN, r.UND, r.RS_LISTA, r.RS_CUSTO, r.RS_VENDA_SUG, r.RS_VEN_REAL, r.MKP_REAL, r.MKP, r.DIF_MKP, i + 1, r.ST] for i, r in enumerate(records)]
 
         print()
         print(tabulate(table, headers=headers, tablefmt="fancy_grid"))

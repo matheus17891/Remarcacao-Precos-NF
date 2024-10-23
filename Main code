@@ -119,13 +119,20 @@ while True:
     conn.close()
 
     quer_remarcar = input(" Deseja remarcar a NF? (s/n): ")
+    print() # espaçamento
     if quer_remarcar.lower() == 's':
         remarcar_todos = input(" Deseja remarcar TODOS os itens? (s/n): ")
+        print() #espaçamento
         if remarcar_todos.lower() == 's':
-            print("Remarcando todos os itens...") # Inserir o script para remarcar TODAS as linhas
+            codigos = [str(r.COD) for r in records]
+            print("Remarcando todos os itens. Códigos:", ", ".join(codigos))  # Exibe todos os valores da coluna r.COD
+            # Inserir a logica para processar as linhas selecionadas
+            break
         else:
             num_linhas = input(" Digite os Nºs das linhas: ")
-            print("Remarcando as linhas selecionadas...") # Inserir a logica para processar as linhas selecionadas   
+            print("Remarcando os itens selecionados. Códigos:", ", ".join(num_linhas)) 
+            # Inserir a logica para processar as linhas selecionadas
+            break   
     else:
         print("Nenhum item será remarcado. Próxima NF.")      
 

@@ -1,0 +1,18 @@
+
+BEGIN TRANSACTION 
+
+UPDATE 
+	NAOCONFOR
+SET 
+	COLABORADOR = 'Fabiene'
+OUTPUT 
+	inserted.COLABORADOR, inserted.DESCRICAO
+WHERE 
+	COLABORADOR = 'matheus'
+
+rollback transaction -- desfaz
+
+commit transaction -- confirma
+
+
+;

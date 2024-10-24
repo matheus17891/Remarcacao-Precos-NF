@@ -132,9 +132,9 @@ while True:
         else:
             num_linhas = input("Digite os Nºs das linhas: ").split(",")
             print() #espaçamento
-            num_linhas = [int(x.strip()) for x in num_linhas if x.strip().isdigit()]  # Converte as linhas para inteiros
-            codigos_selecionados = [str(records[i-1].COD) for i in num_linhas if i > 0 and i <= len(records)] # Filtrar as linhas inseridas
-            print("Remarcando os itens selecionados. Códigos:", ", ".join(codigos_selecionados))  # Exibe os códigos correspondentes às linhas
+            num_linhas = [int(x.strip()) for x in num_linhas if x.strip().isdigit()]  # Converte o nº das linhas para inteiro para acessar o records
+            codigos_selecionados = [str(records[i-1].COD) for i in num_linhas if i > 0 and i <= len(records)] # Filtra as linhas, deixando apenas as inseridas
+            print("Remarcando os itens selecionados. Códigos:", ", ".join(codigos_selecionados))  # Exibe os códigos correspondentes às linhas inseridas
             
             
             # Inserir a logica para processar as linhas selecionadas

@@ -127,7 +127,26 @@ while True:
             codigos = [str(r.COD) for r in records]
             print("Remarcando todos os itens. Códigos:", ", ".join(codigos))  # Exibe todos os valores da coluna r.COD
            
-            # Inserir a logica para processar as linhas selecionadas
+####################### INÌCIO teste do script do update de todas as linhas         
+            for r in records:
+                codigo = r.COD  # Pega o código do produto
+                valor_venda_sug = r.RS_VENDA_SUG  # Pega o valor sugerido de venda
+                query = f"""
+                    UPDATE 
+                        produtocad
+                    SET 
+                        precoven = {valor_venda_sug}
+                    WHERE
+                        codpro = {codigo}
+                """   
+                cursor.execute(query) # Executa a query para cada código
+
+            conn.commit() # Confirma as alterações
+
+            print("Preços atualizados para todos os itens da tabela.")
+
+####################### FIM teste do script do update de todas as linhas 
+            
             break
         else:
             num_linhas = input("Digite os Nºs das linhas: ").split(",")
@@ -136,7 +155,7 @@ while True:
             codigos_selecionados = [str(records[i-1].COD) for i in num_linhas if i > 0 and i <= len(records)] # Filtra as linhas, deixando apenas as inseridas
             print("Remarcando os itens selecionados. Códigos:", ", ".join(codigos_selecionados))  # Exibe os códigos correspondentes às linhas inseridas
             
-           ####################### teste do script do update das linhas selecionadas
+####################### INÌCIO do teste do script do update das linhas selecionadas
             
             for i, codigo in enumerate(codigos_selecionados):
                 valor_venda_sug = records[i].RS_VENDA_SUG  # Pega o valor de RS_VENDA_SUG da respectiva linha em records
@@ -153,7 +172,9 @@ while True:
             conn.commit() # Confirma as alterações
 
             print(f"Preços atualizados para os códigos: {', '.join(codigos_selecionados)}")
-            
+
+####################### FIM do teste do script do update das linhas selecionadas
+
             break   
     else:
         print("Nenhum item será remarcado. Próxima NF.")      

@@ -3,7 +3,7 @@ import pyodbc
 from tabulate import tabulate
 
 SERVER = '192.168.0.254'
-DATABASE = 'BDDEMO'
+DATABASE = 'BDCOPIA'
 USERNAME = 'microuni'
 PASSWORD = 'microuni'
 
@@ -136,8 +136,24 @@ while True:
             codigos_selecionados = [str(records[i-1].COD) for i in num_linhas if i > 0 and i <= len(records)] # Filtra as linhas, deixando apenas as inseridas
             print("Remarcando os itens selecionados. Códigos:", ", ".join(codigos_selecionados))  # Exibe os códigos correspondentes às linhas inseridas
             
+           ####################### teste do script do update das linhas selecionadas
             
-            # Inserir a logica para processar as linhas selecionadas
+            for i, codigo in enumerate(codigos_selecionados):
+                valor_venda_sug = records[i].RS_VENDA_SUG  # Pega o valor de RS_VENDA_SUG da respectiva linha em records
+                query = f"""
+                    UPDATE 
+                        produtocad
+                    SET 
+                        precoven = {valor_venda_sug}
+                    WHERE
+                        codpro = {codigo}
+                """ 
+                cursor.execute(query) # Executa a query de update para cada código
+
+            conn.commit() # Confirma as alterações
+
+            print(f"Preços atualizados para os códigos: {', '.join(codigos_selecionados)}")
+            
             break   
     else:
         print("Nenhum item será remarcado. Próxima NF.")      

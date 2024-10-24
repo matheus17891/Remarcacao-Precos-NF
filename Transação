@@ -9,7 +9,9 @@ SET
 	inserted.precoven NOVO, deleted.precoven ANTIGO*/
 
 WHERE
-	codpro = 19692
+	codpro IN (
+
+	)
 
 
 rollback transaction -- desfaz

@@ -12,7 +12,7 @@ print(" ---------------------------------------------------")
 print(" ---------------------------------------------------")
 print(" ----------- REMARCAÇÃO DE PREÇOS DE NF ------------")
 print(" ---------------------------------------------------")
-print(" -------------------------------------- v1.0 MAAF---")
+print(" -------------------------------------- v2.0 MAAF---")
 print()
 
 while True:
@@ -126,11 +126,17 @@ while True:
         if remarcar_todos.lower() == 's':
             codigos = [str(r.COD) for r in records]
             print("Remarcando todos os itens. Códigos:", ", ".join(codigos))  # Exibe todos os valores da coluna r.COD
+           
             # Inserir a logica para processar as linhas selecionadas
             break
         else:
-            num_linhas = input(" Digite os Nºs das linhas: ")
-            print("Remarcando os itens selecionados. Códigos:", ", ".join(num_linhas)) 
+            num_linhas = input("Digite os Nºs das linhas: ").split(",")
+            print() #espaçamento
+            num_linhas = [int(x.strip()) for x in num_linhas if x.strip().isdigit()]  # Converte as linhas para inteiros
+            codigos_selecionados = [str(records[i-1].COD) for i in num_linhas if i > 0 and i <= len(records)] # Filtrar as linhas inseridas
+            print("Remarcando os itens selecionados. Códigos:", ", ".join(codigos_selecionados))  # Exibe os códigos correspondentes às linhas
+            
+            
             # Inserir a logica para processar as linhas selecionadas
             break   
     else:

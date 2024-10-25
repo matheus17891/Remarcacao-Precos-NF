@@ -3,7 +3,7 @@ import pyodbc
 from tabulate import tabulate
 
 SERVER = '192.168.0.254'
-DATABASE = 'BDCOPIA'
+DATABASE = 'BDTREINA'
 USERNAME = 'microuni'
 PASSWORD = 'microuni'
 
@@ -36,7 +36,7 @@ while True:
             FORMAT(a.quant, '0.00') QUAN,
             a.unidade UND ,
             FORMAT(a.preco, '0.00') RS_LISTA,
-            FORMAT(a.custven, '0.00') RS_CUSTO,
+            FORMAT(b.precocomp, '0.00') RS_CUSTO, -- FORMAT(a.custven, '0.00')
             FORMAT(b.precoven, '0.00') RS_VEN_REAL,
 
             CASE
@@ -116,7 +116,7 @@ while True:
 
     print()
 
-    conn.close()
+    #conn.close()
 
     quer_remarcar = input(" Deseja remarcar a NF? (s/n): ")
     print() # espaçamento

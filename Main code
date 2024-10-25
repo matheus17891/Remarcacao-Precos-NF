@@ -108,7 +108,7 @@ while True:
         print()
         print(" NF não localizada")
     else:
-        headers = ["  Entra", "  Remar", "Cod ", "    Descrição", "Und", " Lista ", "ST ", " Custo ", " Sugerido ", " Atual ","MKP Cad ", "MKP Real ", "Dif MKP ", "#", "Conv"]
+        headers = ["  Entra", "  Remar", "Cod ", "      Descrição", "Und", " Lista ", "ST ", " Custo ", " Sugerido ", " Atual ","MKP Cad ", "MKP Real ", "Dif MKP ", "#", "Conv"]
         table = [[r.ENT, r.REM, r.COD, r.DESCRICAO, r.UND, r.RS_LISTA, r.ST, r.RS_CUSTO, r.RS_VENDA_SUG, r.RS_VEN_REAL,r.MKP, r.MKP_REAL, r.DIF_MKP, i + 1, r.CONVER] for i, r in enumerate(records)]
 
         print()

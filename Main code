@@ -3,20 +3,18 @@ import pyodbc
 from tabulate import tabulate
 
 SERVER = '192.168.0.254'
-DATABASE = 'BDTREINA'
+DATABASE = 'BDDEMO'
 USERNAME = 'microuni'
 PASSWORD = 'microuni'
 
-print()
-print(" ---------------------------------------------------")
-print(" ---------------------------------------------------")
-print(" ----------- REMARCAÇÃO DE PREÇOS DE NF ------------")
-print(" ---------------------------------------------------")
-print(" -------------------------------------- v2.0 MAAF---")
-print()
-
 while True:
 
+    os.system('cls' if os.name == 'nt' else 'clear')  # Limpa a tela, elimina resultados da ultima consulta
+
+    print()
+    print(" -----------------------------------------------")
+    print(" --------- REMARCAÇÃO DE PREÇOS DE NF ----------")
+    print(" -----------------------------------------------")
     print()
 
     numnota = input(" Digite o Nº da NF: ")
@@ -116,8 +114,6 @@ while True:
         print(tabulate(table, headers=headers, tablefmt="fancy_grid"))
     print()
 
-    #conn.close() # ecerra conexão com o bd
-
     quer_remarcar = input(" Deseja remarcar a NF? (s/n): ")
     print() # espaçamento
     if quer_remarcar.lower() == 's':
@@ -144,13 +140,14 @@ while True:
 
             conn.commit() # Confirma as alterações
 
-            print("Preços atualizados para todos os itens da tabela.")
+            print("Os preços de venda foram atualizados para todos os códigos.")
 
-            
-            break
+            continuar = input(" Deseja remarcar outra NF? (s/n): ")
+            if continuar.lower() != 'n':
+                continue # retorna ao inicio do loop
 
         else:
-            num_linhas = input("Digite os Nºs das linhas: ").split(",")
+            num_linhas = input(" Digite os Nºs das linhas: ").split(",")
             print() #espaçamento
             num_linhas = [int(x.strip()) for x in num_linhas if x.strip().isdigit()]  # Converte o nº das linhas para inteiro para acessar o records
             codigos_selecionados = [str(records[i-1].COD) for i in num_linhas if i > 0 and i <= len(records)] # Filtra as linhas, deixando apenas as inseridas
@@ -175,9 +172,11 @@ while True:
             print(f"Preços atualizados para os códigos: {', '.join(codigos_selecionados)}")
 
 
-            break   
+        continuar = input(" Deseja remarcar outra NF? (s/n): ")
+        if continuar.lower() != 'n':
+            continue # retorna ao inicio do loop
         
     else:
-        print("Nenhum item será remarcado. Próxima NF.")      
+        print("Nenhum item será remarcado. Próxima NF.")
 
-    os.system('cls' if os.name == 'nt' else 'clear')  # Limpar a tela
+#conn.close() # ecerra conexão com o bd

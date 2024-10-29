@@ -1,0 +1,29 @@
+
+UPDATE 
+	produtocad
+
+SET 
+	precoven = 200
+
+/*OUTPUT 
+	inserted.precoven NOVO, deleted.precoven ANTIGO*/
+
+WHERE
+	codpro IN (
+
+	)
+
+
+rollback transaction -- desfaz
+
+commit transaction -- confirma
+
+
+
+
+
+
+
+
+
+

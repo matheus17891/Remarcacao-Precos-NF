@@ -7,16 +7,14 @@ DATABASE = 'BDDEMO'
 USERNAME = 'microuni'
 PASSWORD = 'microuni'
 
-print()
-print(" ---------------------------------------------------")
-print(" ---------------------------------------------------")
-print(" ----------- REMARCAÇÃO DE PREÇOS DE NF ------------")
-print(" ---------------------------------------------------")
-print(" -------------------------------------- v1.0 MAAF---")
-print()
-
 while True:
 
+    os.system('cls' if os.name == 'nt' else 'clear')  # Limpa a tela, elimina resultados da ultima consulta
+
+    print()
+    print(" -----------------------------------------------")
+    print(" --------- REMARCAÇÃO DE PREÇOS DE NF ----------")
+    print(" -----------------------------------------------")
     print()
 
     numnota = input(" Digite o Nº da NF: ")
@@ -36,7 +34,7 @@ while True:
             FORMAT(a.quant, '0.00') QUAN,
             a.unidade UND ,
             FORMAT(a.preco, '0.00') RS_LISTA,
-            FORMAT(a.custven, '0.00') RS_CUSTO,
+            FORMAT(b.precocomp, '0.00') RS_CUSTO, -- FORMAT(a.custven, '0.00')
             FORMAT(b.precoven, '0.00') RS_VEN_REAL,
 
             CASE
@@ -108,18 +106,76 @@ while True:
         print()
         print(" NF não localizada")
     else:
-        headers = ["Entra", "Remar", "Cod", "Descrição", "Qt", "Und", "Lista", "Custo", "Suger", "Real", "MKP R", "MKP", "D MKP", "ST","Conver."]
-        table = [[r.ENT, r.REM, r.COD, r.DESCRICAO, r.QUAN, r.UND, r.RS_LISTA, r.RS_CUSTO, r.RS_VENDA_SUG, r.RS_VEN_REAL, r.MKP_REAL, r.MKP, r.DIF_MKP, r.ST] for r in records]
+        headers = ["  Entra", "  Remar", "Cod ", "      Descrição", "Und", " Lista ", "ST ", " Custo ", " Sugerido ", " Atual ","MKP Cad ", "MKP Real ", "Dif MKP ", "#", "Conv"]
+        table = [[r.ENT, r.REM, r.COD, r.DESCRICAO, r.UND, r.RS_LISTA, r.ST, r.RS_CUSTO, r.RS_VENDA_SUG, r.RS_VEN_REAL,r.MKP, r.MKP_REAL, r.DIF_MKP, i + 1, r.CONVER] for i, r in enumerate(records)]
 
         print()
+        #print(tabulate(table, headers=headers, tablefmt="fancy_grid"))
         print(tabulate(table, headers=headers, tablefmt="fancy_grid"))
-
     print()
 
-    conn.close()
+    quer_remarcar = input(" Deseja remarcar a NF? (s/n): ")
+    print() # espaçamento
+    if quer_remarcar.lower() == 's':
+        remarcar_todos = input(" Deseja remarcar TODOS os itens? (s/n): ")
+        print() #espaçamento
+        if remarcar_todos.lower() == 's':
+            codigos = [str(r.COD) for r in records]
+            print("Remarcando todos os itens. Códigos:", ", ".join(codigos))  # Exibe todos os valores da coluna r.COD
+           
+            # update de todas as linhas   
+                  
+            for r in records:
+                codigo = r.COD  # Pega o código do produto
+                valor_venda_sug = r.RS_VENDA_SUG  # Pega o valor sugerido de venda
+                query = f"""
+                    UPDATE 
+                        produtocad
+                    SET 
+                        precoven = {valor_venda_sug}
+                    WHERE
+                        codpro = {codigo}
+                """   
+                cursor.execute(query) # Executa a query para cada código
 
-    continuar = input(" Deseja remarcar outra NF? (s/n): ")
-    if continuar.lower() != 's':
-        break
+            conn.commit() # Confirma as alterações
 
-    os.system('cls' if os.name == 'nt' else 'clear')  # Limpar a tela
+            print("Os preços de venda foram atualizados para todos os códigos.")
+
+            continuar = input(" Deseja remarcar outra NF? (s/n): ")
+            if continuar.lower() != 'n':
+                continue # retorna ao inicio do loop
+
+        else:
+            num_linhas = input(" Digite os Nºs das linhas: ").split(",")
+            print() #espaçamento
+            num_linhas = [int(x.strip()) for x in num_linhas if x.strip().isdigit()]  # Converte o nº das linhas para inteiro para acessar o records
+            codigos_selecionados = [str(records[i-1].COD) for i in num_linhas if i > 0 and i <= len(records)] # Filtra as linhas, deixando apenas as inseridas
+            
+            # update das linhas selecionadas
+            
+            for i, codigo in enumerate(codigos_selecionados):
+                valor_venda_sug = records[i].RS_VENDA_SUG  # Pega o valor de RS_VENDA_SUG da respectiva linha em records
+                query = f"""
+                    UPDATE 
+                        produtocad
+                    SET 
+                        precoven = {valor_venda_sug}
+                    WHERE
+                        codpro = {codigo}
+                """ 
+                cursor.execute(query) # Executa a query de update para cada código
+
+            conn.commit() # Confirma as alterações
+
+            print(f"Preços atualizados para os códigos: {', '.join(codigos_selecionados)}")
+
+
+        continuar = input(" Deseja remarcar outra NF? (s/n): ")
+        if continuar.lower() != 'n':
+            continue # retorna ao inicio do loop
+        
+    else:
+        print("Nenhum item será remarcado. Próxima NF.")
+
+#conn.close() # ecerra conexão com o bd

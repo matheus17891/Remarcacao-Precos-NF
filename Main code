@@ -151,7 +151,6 @@ while True:
             print() #espaçamento
             num_linhas = [int(x.strip()) for x in num_linhas if x.strip().isdigit()]  # Converte o nº das linhas para inteiro para acessar o records
             codigos_selecionados = [str(records[i-1].COD) for i in num_linhas if i > 0 and i <= len(records)] # Filtra as linhas, deixando apenas as inseridas
-            print("Remarcando os itens selecionados. Códigos:", ", ".join(codigos_selecionados))  # Exibe os códigos correspondentes às linhas inseridas
             
             # update das linhas selecionadas
             
